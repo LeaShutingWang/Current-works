@@ -1,3 +1,7 @@
 Git-*-64-bit.exe
 .server-*.log
+server.*.log
 .superpowers/
+.env
+.env.*
+!.env.example

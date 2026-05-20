@@ -72,12 +72,15 @@ elements.generateButton.addEventListener("click", async () => {
   showHint("正在提炼项目经历...");
 
   try {
-    state.projects = await extractProjects({
-      sources: state.sources,
-      language: "zh-CN",
-      style: "big-tech"
-    });
-    showHint("已生成项目卡和简历 bullet。你可以直接编辑右侧文案。");
+    const result = await extractFromActiveProvider();
+    state.projects = result.projects;
+    elements.appStatus.textContent =
+      result.provider === "openai" ? `真实 AI：${result.model}` : "本地 mock 模式";
+    showHint(
+      result.provider === "openai"
+        ? "已通过真实 OpenAI API 生成。你可以直接编辑右侧文案。"
+        : "本地 mock 已生成。启动 server 并配置 OPENAI_API_KEY 后会自动调用真实 AI。"
+    );
   } catch (error) {
     showHint(error.message, true);
   } finally {
@@ -87,6 +90,44 @@ elements.generateButton.addEventListener("click", async () => {
     renderBullets();
   }
 });
+
+async function extractFromActiveProvider() {
+  try {
+    const response = await fetch(resolveApiUrl("/api/extract"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sources: state.sources })
+    });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.error ?? "真实 AI 请求失败。");
+    }
+
+    return await response.json();
+  } catch {
+    return {
+      provider: "mock",
+      model: "local",
+      projects: await extractProjects({
+        sources: state.sources,
+        language: "zh-CN",
+        style: "big-tech"
+      })
+    };
+  }
+}
+
+async function refreshProviderStatus() {
+  try {
+    const response = await fetch(resolveApiUrl("/api/status"));
+    const status = await response.json();
+    elements.appStatus.textContent =
+      status.mode === "openai" ? `真实 AI：${status.model}` : "未检测到 API Key";
+  } catch {
+    elements.appStatus.textContent = "本地 mock 模式";
+  }
+}
 
 async function addFiles(files) {
   for (const file of files) {
@@ -293,6 +334,14 @@ function createId(prefix) {
 renderSources();
 renderProjects();
 renderBullets();
+refreshProviderStatus();
+
+function resolveApiUrl(path) {
+  if (location.protocol === "http:" || location.protocol === "https:") {
+    return path;
+  }
+  return `http://127.0.0.1:8787${path}`;
+}
 
 function validateSources(sources) {
   const readyText = sources
