@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>项目经历提炼器</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Resume Project Extractor</p>
+          <h1>项目经历提炼器</h1>
+        </div>
+        <div class="status-pill" id="appStatus">本地 mock 模式</div>
+      </header>
+
+      <section class="workspace" aria-label="项目经历提炼工作台">
+        <aside class="panel source-panel">
+          <div class="panel-heading">
+            <h2>资料输入</h2>
+            <span>txt / md / docx</span>
+          </div>
+
+          <label class="field-label" for="pasteInput">粘贴项目资料</label>
+          <textarea
+            id="pasteInput"
+            placeholder="把项目介绍、周报、技术方案、OKR、复盘内容粘贴到这里..."
+          ></textarea>
+
+          <div class="upload-box" id="dropZone">
+            <input id="fileInput" type="file" multiple accept=".txt,.md,.docx" />
+            <label for="fileInput">
+              <strong>拖拽或选择文件</strong>
+              <span>当前原型支持 txt / md 读取，docx 先显示占位状态</span>
+            </label>
+          </div>
+
+          <div class="source-list" id="sourceList"></div>
+
+          <button class="primary-button" id="generateButton">提炼工作经历</button>
+          <p class="helper-text" id="inputHint">先丢一点真实项目材料，我会生成项目卡和可编辑 bullet。</p>
+        </aside>
+
+        <section class="panel project-panel">
+          <div class="panel-heading">
+            <h2>项目卡片</h2>
+            <span id="projectCount">0 个项目</span>
+          </div>
+          <div class="empty-state" id="projectEmpty">
+            <h3>等待提炼</h3>
+            <p>项目背景、职责、动作、技术栈、难点和结果会显示在这里，方便你检查 AI 是否理解正确。</p>
+          </div>
+          <div class="project-list" id="projectList"></div>
+        </section>
+
+        <section class="panel bullet-panel">
+          <div class="panel-heading">
+            <h2>简历话术</h2>
+            <span>可编辑 / 可复制</span>
+          </div>
+          <div class="empty-state" id="bulletEmpty">
+            <h3>还没有 bullet</h3>
+            <p>生成后可以直接改文案、复制单条，或者复制整个项目经历。</p>
+          </div>
+          <div class="bullet-list" id="bulletList"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./src/app.js"></script>
+  </body>
+</html>
