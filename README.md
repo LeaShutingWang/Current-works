@@ -39,7 +39,7 @@ Recommended setup:
 4. Set environment variables on Render:
    - `OPENAI_API_KEY`
    - `OPENAI_MODEL=gpt-4.1-mini`
-   - `APP_PASSWORD=xueyidabendan`
+   - `APP_PASSWORD`
 5. Start command:
 
 ```bash
